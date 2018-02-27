@@ -8,6 +8,7 @@ interface Ipolicies {
 	secured: boolean
 	secure?: AFSecurityPolicy
 }
+let followRedirects: boolean = true;
 let policies: Ipolicies = {
 	def: AFSecurityPolicy.defaultPolicy(),
 	secured: false,
@@ -33,6 +34,10 @@ export function disableSSLPinning() {
 	console.log('nativescript-https > Disabled SSL pinning')
 }
 console.info('nativescript-https > Disabled SSL pinning by default')
+
+export function setupRedirects(follow: boolean) {
+	followRedirects = follow;
+}
 
 function AFSuccess(resolve, task: NSURLSessionDataTask, data: NSDictionary<string, any> & NSData & NSArray<any>) {
 	let content: any
@@ -110,6 +115,8 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 					})
 				}
 			}
+
+			manager.setTaskWillPerformHTTPRedirectionBlock((url, session, response, request) => followRedirects ? request : null);
 
 			let methods = {
 				'GET': 'GETParametersSuccessFailure',

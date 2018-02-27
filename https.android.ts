@@ -16,6 +16,7 @@ let peer: Ipeer = {
 	allowInvalidCertificates: false,
 	validatesDomainName: true,
 }
+let followRedirects: boolean = true;
 
 export function enableSSLPinning(options: Https.HttpsSSLPinningOptions) {
 	if (!peer.host && !peer.certificate) {
@@ -57,13 +58,19 @@ export function disableSSLPinning() {
 }
 console.info('nativescript-https > Disabled SSL pinning by default')
 
+export function setupRedirects(follow: boolean) {
+	followRedirects = follow;
+	getClient(true);
+}
+
 let Client: okhttp3.OkHttpClient
 function getClient(reload: boolean = false): okhttp3.OkHttpClient {
 	if (Client && reload == false) {
 		return Client
 	}
 
-	let client = new okhttp3.OkHttpClient.Builder()
+	const client = new okhttp3.OkHttpClient.Builder().followRedirects(followRedirects);
+
 	if (peer.enabled == true) {
 		if (peer.host || peer.certificate) {
 			let spec = okhttp3.ConnectionSpec.MODERN_TLS

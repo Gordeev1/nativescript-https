@@ -780,7 +780,7 @@ declare class AFURLSessionManager extends NSObject implements NSCopying, NSSecur
 
 	setTaskNeedNewBodyStreamBlock(block: (p1: NSURLSession, p2: NSURLSessionTask) => NSInputStream): void;
 
-	setTaskWillPerformHTTPRedirectionBlock(block: (p1: NSURLSession, p2: NSURLSessionTask, p3: NSURLResponse, p4: NSURLRequest) => NSURLRequest): void;
+	setTaskWillPerformHTTPRedirectionBlock(block: (p1: NSURLSession, p2: NSURLSessionTask, p3: NSURLResponse, p4: NSURLRequest) => NSURLRequest | null): void;
 
 	uploadProgressForTask(task: NSURLSessionTask): NSProgress;
 
