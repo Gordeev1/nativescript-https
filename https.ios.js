@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("tns-core-modules/utils/types");
+var followRedirects = true;
 var policies = {
     def: AFSecurityPolicy.defaultPolicy(),
     secured: false,
@@ -27,6 +28,10 @@ function disableSSLPinning() {
 }
 exports.disableSSLPinning = disableSSLPinning;
 console.info('nativescript-https > Disabled SSL pinning by default');
+function setupRedirects(follow) {
+    followRedirects = follow;
+}
+exports.setupRedirects = setupRedirects;
 function AFSuccess(resolve, task, data) {
     var content;
     if (data && data.class) {
@@ -100,6 +105,7 @@ function request(opts) {
                     });
                 }
             }
+            manager_1.setTaskWillPerformHTTPRedirectionBlock(function (url, session, response, request) { return followRedirects ? request : null; });
             var methods = {
                 'GET': 'GETParametersSuccessFailure',
                 'POST': 'POSTParametersSuccessFailure',
