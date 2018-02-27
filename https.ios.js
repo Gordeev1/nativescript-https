@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var types_1 = require("utils/types");
+var types_1 = require("tns-core-modules/utils/types");
 var policies = {
     def: AFSecurityPolicy.defaultPolicy(),
     secured: false,

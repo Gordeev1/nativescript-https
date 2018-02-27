@@ -1,8 +1,4 @@
-// 
-
 import { HttpRequestOptions, Headers } from 'http'
-
-
 
 export interface HttpsSSLPinningOptions {
 	host: string
@@ -30,15 +26,3 @@ export interface HttpsResponse {
 	reason?: string
 	reject?: boolean
 }
-
-
-
-
-
-
-
-
-
-
-
-

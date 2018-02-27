@@ -1,28 +1,7 @@
-// 
-
-
-import * as application from 'application'
-import { HttpRequestOptions, Headers, HttpResponse } from 'http'
-import { isDefined, isNullOrUndefined } from 'utils/types'
+import * as application from 'tns-core-modules/application'
+import { HttpRequestOptions, Headers, HttpResponse } from 'tns-core-modules/http'
+import { isDefined, isNullOrUndefined } from 'tns-core-modules/utils/types'
 import * as Https from './https.common'
-
-
-
-// declare var java: any
-// declare var javax: any
-// java.security.cert.Certificate as any
-// declare module java {
-// 	export module security {
-// 		export module cert {
-// 			export interface Certificate { }
-// 		}
-// 	}
-// 	export module io {
-// 		export interface FileInputStream { }
-// 	}
-// }
-
-
 
 interface Ipeer {
 	enabled: boolean
@@ -39,7 +18,6 @@ let peer: Ipeer = {
 }
 
 export function enableSSLPinning(options: Https.HttpsSSLPinningOptions) {
-	// console.log('options', options)
 	if (!peer.host && !peer.certificate) {
 		let certificate: string
 		let inputStream: java.io.FileInputStream
@@ -79,24 +57,14 @@ export function disableSSLPinning() {
 }
 console.info('nativescript-https > Disabled SSL pinning by default')
 
-
-
 let Client: okhttp3.OkHttpClient
 function getClient(reload: boolean = false): okhttp3.OkHttpClient {
-	// if (!Client) {
-	// 	Client = new okhttp3.OkHttpClient()
-	// }
-	// if (Client) {
-	// 	Client.connectionPool().evictAll()
-	// 	Client = null
-	// }
 	if (Client && reload == false) {
 		return Client
 	}
 
 	let client = new okhttp3.OkHttpClient.Builder()
 	if (peer.enabled == true) {
-		// console.log('peer', peer)
 		if (peer.host || peer.certificate) {
 			let spec = okhttp3.ConnectionSpec.MODERN_TLS
 			client.connectionSpecs(java.util.Collections.singletonList(spec))
@@ -139,7 +107,7 @@ function getClient(reload: boolean = false): okhttp3.OkHttpClient {
 			if (peer.validatesDomainName == true) {
 				try {
 					client.hostnameVerifier(new javax.net.ssl.HostnameVerifier({
-						verify: function(hostname: string, session: javax.net.ssl.ISSLSession): boolean {
+						verify: function (hostname: string, session: javax.net.ssl.ISSLSession): boolean {
 							let pp = session.getPeerPrincipal().getName()
 							let hv = javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier()
 							return (
@@ -169,7 +137,7 @@ function getClient(reload: boolean = false): okhttp3.OkHttpClient {
 const strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder().permitAll().build()
 
 export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsResponse> {
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		try {
 			let client = getClient()
 
@@ -177,7 +145,7 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 			request.url(opts.url)
 
 			if (opts.headers) {
-				Object.keys(opts.headers).forEach(function(key) {
+				Object.keys(opts.headers).forEach(function (key) {
 					request.addHeader(key, opts.headers[key] as any)
 				})
 			}
@@ -214,28 +182,7 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 			android.os.StrictMode.setThreadPolicy(strictModeThreadPolicyPermitAll)
 
 			client.newCall(request.build()).enqueue(new okhttp3.Callback({
-				onResponse: function(task, response) {
-					// console.log('onResponse')
-					// console.keys('response', response)
-					// console.log('onResponse > response.isSuccessful()', response.isSuccessful())
-
-					// let body = response.body()//.bytes()
-					// console.keys('body', body)
-					// console.log('body.contentType()', body.contentType())
-					// console.log('body.contentType().toString()', body.contentType().toString())
-					// console.log('body.bytes()', body.bytes())
-					// console.dump('wtf', wtf)
-					// console.log('opts.url', opts.url)
-					// console.log('body.string()', body.string())
-
-					// let content: any = response.body().string()
-					// console.log('content', content)
-					// try {
-					// 	content = JSON.parse(response.body().string())
-					// } catch (error) {
-					// 	return reject(error)
-					// }
-
+				onResponse: function (task, response) {
 					let content = response.body().string()
 					try {
 						content = JSON.parse(content)
@@ -255,7 +202,7 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 					resolve({ content, statusCode, headers })
 
 				},
-				onFailure: function(task, error) {
+				onFailure: function (task, error) {
 					reject(error)
 				},
 			}))
@@ -265,36 +212,6 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 		}
 
 	})
-
-	// {
-	//     "content": {
-	//         "code": "PreconditionFailed",
-	//         "message": "!x-uuid"
-	//     },
-	//     "statusCode": 412,
-	//     "headers": {
-	//         "Content-Length": "49",
-	//         "Server": "nginx/1.10.1",
-	//         "Content-Type": "application/json",
-	//         "Connection": "keep-alive",
-	//         "Date": "Mon, 26 Dec 2016 03:31:42 GMT"
-	//     }
-	// }
-
 }
 
-
-
 export * from './https.common'
-
-
-
-
-
-
-
-
-
-
-
-

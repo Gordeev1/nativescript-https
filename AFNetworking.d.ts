@@ -1,4 +1,3 @@
-
 declare class AFAutoPurgingImageCache extends NSObject implements AFImageRequestCache {
 
 	static alloc(): AFAutoPurgingImageCache; // inherited from NSObject

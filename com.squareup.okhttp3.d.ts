@@ -1,4 +1,3 @@
-
 declare module okhttp3 {
 	export class Address extends java.lang.Object {
 		public proxy(): java.net.Proxy;
