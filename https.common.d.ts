@@ -16,7 +16,7 @@ export interface HttpsRequestOptions {
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD'
 	headers?: Headers
 	params?: HttpsRequestObject
-	body?: HttpsRequestObject
+	body?: HttpsRequestObject | string
 }
 
 export interface HttpsResponse {

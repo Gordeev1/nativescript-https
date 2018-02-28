@@ -132,6 +132,13 @@ Option | Description
 `allowInvalidCertificates?: boolean` | Default: `false`. This should **always** be `false` if you are using SSL pinning. Set this to `true` if you're using a self-signed certificate.
 `validatesDomainName?: boolean` | Default: `true`. Determines if the domain name should be validated with your pinned certificate.
 
+#### Setup redirects
+```typescript
+import * as Https from 'nativescript-https'
+Https.setupRedirects(false)
+```
+All requests after calling this method will no longer make redirects until it is re-enabled once again.
+
 ## `iOS` Troubleshooting
 > ### Please educate yourself on iOS's [App Transport Security](https://github.com/codepath/ios_guides/wiki/App-Transport-Security) before starting beef!
 

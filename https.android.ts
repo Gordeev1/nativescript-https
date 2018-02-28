@@ -1,6 +1,6 @@
 import * as application from 'tns-core-modules/application'
 import { HttpRequestOptions, Headers, HttpResponse } from 'tns-core-modules/http'
-import { isDefined, isNullOrUndefined } from 'tns-core-modules/utils/types'
+import { isDefined, isNullOrUndefined, isObject } from 'tns-core-modules/utils/types'
 import * as Https from './https.common'
 
 interface Ipeer {
@@ -176,9 +176,13 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 			} else {
 				let type = <string>opts.headers['Content-Type'] || 'application/json'
 				let body = <any>opts.body || {}
+
 				try {
-					body = JSON.stringify(body)
+					if (isObject(body)) {
+						body = JSON.stringify(body)
+					}
 				} catch (e) { }
+
 				request[methods[opts.method]](okhttp3.RequestBody.create(
 					okhttp3.MediaType.parse(type),
 					body
