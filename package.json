@@ -1,6 +1,6 @@
 {
 	"name": "nativescript-https",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Secure HTTP client with SSL pinning for Nativescript - iOS/Android.",
 	"main": "https",
 	"typings": "https.d.ts",
@@ -50,8 +50,13 @@
 	"homepage": "https://github.com/gethuman/nativescript-https",
 	"readmeFilename": "README.md",
 	"devDependencies": {
+		"prettier": "^1.11.1",
 		"tns-core-modules": "latest",
 		"tns-platform-declarations": "latest",
 		"typescript": "latest"
+	},
+	"dependencies": {
+		"tough-cookie": "^2.3.4",
+		"tough-cookie-web-storage-store": "^1.0.0"
 	}
 }

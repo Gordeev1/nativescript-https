@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("tns-core-modules/utils/types");
+var cookie_1 = require("./cookie");
 var peer = {
     enabled: false,
     allowInvalidCertificates: false,
@@ -114,43 +115,26 @@ function getClient(reload) {
     return Client;
 }
 var strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder().permitAll().build();
-function request(opts) {
+function request(_a) {
+    var url = _a.url, headers = _a.headers, _b = _a.body, body = _b === void 0 ? {} : _b, method = _a.method;
     return new Promise(function (resolve, reject) {
         try {
             var client = getClient();
             var request_1 = new okhttp3.Request.Builder();
-            request_1.url(opts.url);
-            if (opts.headers) {
-                Object.keys(opts.headers).forEach(function (key) {
-                    request_1.addHeader(key, opts.headers[key]);
-                });
-            }
-            var methods = {
-                'GET': 'get',
-                'HEAD': 'head',
-                'DELETE': 'delete',
-                'POST': 'post',
-                'PUT': 'put',
-                'PATCH': 'patch',
-            };
-            if ((['GET', 'HEAD'].indexOf(opts.method) != -1)
-                ||
-                    (opts.method == 'DELETE' && !types_1.isDefined(opts.body))) {
-                request_1[methods[opts.method]]();
+            var mergedHeaders_1 = cookie_1.mergeRequestHeaders(url, headers);
+            request_1.url(url);
+            Object.keys(mergedHeaders_1).forEach(function (key) { return request_1.addHeader(key, mergedHeaders_1[key]); });
+            var withoutBody = (['GET', 'HEAD'].includes(method)) || (method == 'DELETE' && !types_1.isDefined(body));
+            var validMethod = method.toLowerCase();
+            if (withoutBody) {
+                request_1[validMethod]();
             }
             else {
-                var type = opts.headers['Content-Type'] || 'application/json';
-                var body = opts.body || {};
-                try {
-                    if (types_1.isObject(body)) {
-                        body = JSON.stringify(body);
-                    }
-                }
-                catch (e) { }
-                request_1[methods[opts.method]](okhttp3.RequestBody.create(okhttp3.MediaType.parse(type), body));
+                var type = headers['Content-Type'] || 'application/json';
+                request_1[validMethod](okhttp3.RequestBody.create(okhttp3.MediaType.parse(type), types_1.isObject(body) ? JSON.stringify(body) : body));
             }
             android.os.StrictMode.setThreadPolicy(strictModeThreadPolicyPermitAll);
-            client.newCall(request_1.build()).enqueue(new okhttp3.Callback({
+            return client.newCall(request_1.build()).enqueue(new okhttp3.Callback({
                 onResponse: function (task, response) {
                     var content = response.body().string();
                     try {
@@ -166,6 +150,7 @@ function request(opts) {
                         var value = heads.value(i);
                         headers[key] = value;
                     }
+                    cookie_1.handleCookie(url, headers);
                     resolve({ content: content, statusCode: statusCode, headers: headers });
                 },
                 onFailure: function (task, error) {

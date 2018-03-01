@@ -2,6 +2,7 @@ import * as application from 'tns-core-modules/application'
 import { HttpRequestOptions, Headers, HttpResponse } from 'tns-core-modules/http'
 import { isDefined, isNullOrUndefined, isObject } from 'tns-core-modules/utils/types'
 import * as Https from './https.common'
+import { handleCookie, mergeRequestHeaders } from './cookie';
 
 interface Ipeer {
 	enabled: boolean
@@ -143,63 +144,41 @@ function getClient(reload: boolean = false): okhttp3.OkHttpClient {
 // No time for that now, and actually it only concerns the '.string()' call of response.body().string() below.
 const strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder().permitAll().build()
 
-export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsResponse> {
+export function request({ url, headers, body = {}, method }: Https.HttpsRequestOptions): Promise<Https.HttpsResponse> {
 	return new Promise(function (resolve, reject) {
 		try {
-			let client = getClient()
+			const client = getClient();
+			const request = new okhttp3.Request.Builder();
+			const mergedHeaders = mergeRequestHeaders(url, headers);
 
-			let request = new okhttp3.Request.Builder()
-			request.url(opts.url)
+			request.url(url);
+			Object.keys(mergedHeaders).forEach(key => request.addHeader(key, <string>mergedHeaders[key]));
 
-			if (opts.headers) {
-				Object.keys(opts.headers).forEach(function (key) {
-					request.addHeader(key, opts.headers[key] as any)
-				})
-			}
+			const withoutBody = (['GET', 'HEAD'].includes(method)) || (method == 'DELETE' && !isDefined(body));
+			const validMethod = method.toLowerCase();
 
-			let methods = {
-				'GET': 'get',
-				'HEAD': 'head',
-
-				'DELETE': 'delete',
-
-				'POST': 'post',
-				'PUT': 'put',
-				'PATCH': 'patch',
-			}
-			if (
-				(['GET', 'HEAD'].indexOf(opts.method) != -1)
-				||
-				(opts.method == 'DELETE' && !isDefined(opts.body))
-			) {
-				request[methods[opts.method]]()
+			if (withoutBody) {
+				request[validMethod]();
 			} else {
-				let type = <string>opts.headers['Content-Type'] || 'application/json'
-				let body = <any>opts.body || {}
+				const type = headers['Content-Type'] || 'application/json';
 
-				try {
-					if (isObject(body)) {
-						body = JSON.stringify(body)
-					}
-				} catch (e) { }
-
-				request[methods[opts.method]](okhttp3.RequestBody.create(
+				request[validMethod](okhttp3.RequestBody.create(
 					okhttp3.MediaType.parse(type),
-					body
+					isObject(body) ? JSON.stringify(body) : <any>body
 				))
 			}
 
 			// enable our policy
 			android.os.StrictMode.setThreadPolicy(strictModeThreadPolicyPermitAll)
 
-			client.newCall(request.build()).enqueue(new okhttp3.Callback({
+			return client.newCall(request.build()).enqueue(new okhttp3.Callback({
 				onResponse: function (task, response) {
 					let content = response.body().string()
 					try {
 						content = JSON.parse(content)
 					} catch (e) { }
 
-					let statusCode = response.code()
+					const statusCode = response.code()
 
 					let headers = {}
 					let heads: okhttp3.Headers = response.headers()
@@ -209,6 +188,8 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 						let value = heads.value(i)
 						headers[key] = value
 					}
+
+					handleCookie(url, headers);
 
 					resolve({ content, statusCode, headers })
 
@@ -221,7 +202,6 @@ export function request(opts: Https.HttpsRequestOptions): Promise<Https.HttpsRes
 		} catch (error) {
 			reject(error)
 		}
-
 	})
 }
 
