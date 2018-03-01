@@ -2,7 +2,7 @@ import { Headers } from 'tns-core-modules/http';
 import { HttpsResponse } from './https.common';
 import * as AppSettings from 'tns-core-modules/application-settings';
 import { WebStorageCookieStore } from 'tough-cookie-web-storage-store';
-import { CookieJar } from 'tough-cookie';
+import { CookieJar } from 'tough-cookie-no-native';
 
 const STORE_KEY = 'NS_COOKIE_STORE';
 
@@ -20,7 +20,8 @@ function resolveCookieString(
 ): string {
 	const searchReg = existing ? /^cookie$/i : /^set-cookie$/i;
 	const key = Object.keys(headers).find(key => Boolean(key.match(searchReg)));
-	return <string>headers[key];
+	const cookie = headers[key];
+	return Array.isArray(cookie) ? cookie.reduce((s1, s2) => `${s1},${s2}`) : cookie;
 }
 
 export function handleCookie(url: string, headers: Headers) {
@@ -40,7 +41,7 @@ export function handleCookie(url: string, headers: Headers) {
 			.forEach(cookie => cookieJar.setCookieSync(cookie, url, { ignoreError: true }));
 }
 
-export function mergeRequestHeaders(url: string, headers = {}): Headers {
+export function mergeRequestHeaders(url: string, headers = {}): { [key: string]: string } {
 	const cookies = resolveCookieString(headers, { existing: true });
 	const existingCookies = cookieJar.getCookieStringSync(url);
 

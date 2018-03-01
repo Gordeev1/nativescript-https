@@ -5,7 +5,7 @@ var cookie_1 = require("./cookie");
 var peer = {
     enabled: false,
     allowInvalidCertificates: false,
-    validatesDomainName: true,
+    validatesDomainName: true
 };
 var followRedirects = true;
 function enableSSLPinning(options) {
@@ -99,7 +99,7 @@ function getClient(reload) {
                                 peer.host == hostname &&
                                 peer.host == session.getPeerHost() &&
                                 pp.indexOf(peer.host) != -1);
-                        },
+                        }
                     }));
                 }
                 catch (error) {
@@ -114,7 +114,9 @@ function getClient(reload) {
     Client = client.build();
     return Client;
 }
-var strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder().permitAll().build();
+var strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder()
+    .permitAll()
+    .build();
 function request(_a) {
     var url = _a.url, headers = _a.headers, _b = _a.body, body = _b === void 0 ? {} : _b, method = _a.method;
     return new Promise(function (resolve, reject) {
@@ -124,7 +126,7 @@ function request(_a) {
             var mergedHeaders_1 = cookie_1.mergeRequestHeaders(url, headers);
             request_1.url(url);
             Object.keys(mergedHeaders_1).forEach(function (key) { return request_1.addHeader(key, mergedHeaders_1[key]); });
-            var withoutBody = (['GET', 'HEAD'].includes(method)) || (method == 'DELETE' && !types_1.isDefined(body));
+            var withoutBody = ['GET', 'HEAD'].includes(method) || (method == 'DELETE' && !types_1.isDefined(body));
             var validMethod = method.toLowerCase();
             if (withoutBody) {
                 request_1[validMethod]();
@@ -155,7 +157,7 @@ function request(_a) {
                 },
                 onFailure: function (task, error) {
                     reject(error);
-                },
+                }
             }));
         }
         catch (error) {

@@ -149,10 +149,7 @@ export function request({
 			const mergedHeaders = mergeRequestHeaders(url, headers);
 
 			Object.keys(mergedHeaders).forEach(key =>
-				manager.requestSerializer.setValueForHTTPHeaderField(
-					<string>mergedHeaders[key],
-					key
-				)
+				manager.requestSerializer.setValueForHTTPHeaderField(mergedHeaders[key], key)
 			);
 
 			let dict: NSMutableDictionary<string, any> = null;
