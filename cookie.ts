@@ -1,7 +1,7 @@
 import { Headers } from 'tns-core-modules/http';
 import { HttpsResponse } from './https.common';
 import * as AppSettings from 'tns-core-modules/application-settings';
-import { WebStorageCookieStore } from 'tough-cookie-web-storage-store';
+import { MobileStorageCookieStore } from 'tough-cookie-mobile-storage-store';
 import { CookieJar } from 'tough-cookie-no-native';
 
 const STORE_KEY = 'NS_COOKIE_STORE';
@@ -11,7 +11,7 @@ class NSStorageWrapper {
 	setItem = (key: string, value: string) => AppSettings.setString(key, value);
 }
 
-const store = new WebStorageCookieStore(new NSStorageWrapper(), STORE_KEY);
+const store = new MobileStorageCookieStore(new NSStorageWrapper(), STORE_KEY);
 const cookieJar = new CookieJar(store);
 
 function resolveCookieString(

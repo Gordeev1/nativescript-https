@@ -56,7 +56,7 @@
 		"typescript": "latest"
 	},
 	"dependencies": {
-		"tough-cookie-no-native": "git+https://github.com/JonnyBurger/tough-cookie-no-native.git",
-		"tough-cookie-web-storage-store": "^1.0.0"
+		"tough-cookie-mobile-storage-store": "git+https://github.com/Gordeev1/tough-cookie-mobile-storage-store.git",
+		"tough-cookie-no-native": "git+https://github.com/JonnyBurger/tough-cookie-no-native.git"
 	}
 }

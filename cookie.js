@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var AppSettings = require("tns-core-modules/application-settings");
-var tough_cookie_web_storage_store_1 = require("tough-cookie-web-storage-store");
+var tough_cookie_mobile_storage_store_1 = require("tough-cookie-mobile-storage-store");
 var tough_cookie_no_native_1 = require("tough-cookie-no-native");
 var STORE_KEY = 'NS_COOKIE_STORE';
 var NSStorageWrapper = (function () {
@@ -11,7 +11,7 @@ var NSStorageWrapper = (function () {
     }
     return NSStorageWrapper;
 }());
-var store = new tough_cookie_web_storage_store_1.WebStorageCookieStore(new NSStorageWrapper(), STORE_KEY);
+var store = new tough_cookie_mobile_storage_store_1.MobileStorageCookieStore(new NSStorageWrapper(), STORE_KEY);
 var cookieJar = new tough_cookie_no_native_1.CookieJar(store);
 function resolveCookieString(headers, _a) {
     if (headers === void 0) { headers = {}; }
