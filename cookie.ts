@@ -1,7 +1,7 @@
 import { Headers } from 'tns-core-modules/http';
 import { HttpsResponse } from './https.common';
 import * as AppSettings from 'tns-core-modules/application-settings';
-import { MobileStorageCookieStore } from 'tough-cookie-mobile-storage-store';
+import MobileStorageCookieStore from 'tough-cookie-mobile-storage-store';
 import { CookieJar } from 'tough-cookie-no-native';
 
 const STORE_KEY = 'NS_COOKIE_STORE';
@@ -52,7 +52,7 @@ export function mergeRequestHeaders(url: string, headers = {}): { [key: string]:
 		console.log(error.message);
 	}
 
-	const mergedCookie = cookies + existingCookies;
+	const mergedCookie = [cookies, existingCookies].filter(str => str).reduce((s1, s2) => s1 + s2);
 
 	return mergedCookie ? { ...headers, Cookie: mergedCookie } : headers;
 }

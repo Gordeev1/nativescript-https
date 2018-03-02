@@ -11,7 +11,7 @@ var NSStorageWrapper = (function () {
     }
     return NSStorageWrapper;
 }());
-var store = new tough_cookie_mobile_storage_store_1.MobileStorageCookieStore(new NSStorageWrapper(), STORE_KEY);
+var store = new tough_cookie_mobile_storage_store_1.default(new NSStorageWrapper(), STORE_KEY);
 var cookieJar = new tough_cookie_no_native_1.CookieJar(store);
 function resolveCookieString(headers, _a) {
     if (headers === void 0) { headers = {}; }
@@ -48,7 +48,7 @@ function mergeRequestHeaders(url, headers) {
     catch (error) {
         console.log(error.message);
     }
-    var mergedCookie = cookies + existingCookies;
+    var mergedCookie = [cookies, existingCookies].filter(function (str) { return str; }).reduce(function (s1, s2) { return s1 + s2; });
     return mergedCookie ? __assign({}, headers, { Cookie: mergedCookie }) : headers;
 }
 exports.mergeRequestHeaders = mergeRequestHeaders;
