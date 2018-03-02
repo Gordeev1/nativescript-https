@@ -21,7 +21,7 @@ function resolveCookieString(
 	const searchReg = existing ? /^cookie$/i : /^set-cookie$/i;
 	const key = Object.keys(headers).find(key => Boolean(key.match(searchReg)));
 	const cookie = headers[key];
-	return Array.isArray(cookie) ? cookie.reduce((s1, s2) => `${s1},${s2}`) : cookie;
+	return Array.isArray(cookie) ? cookie.reduce((s1, s2) => `${s1},${s2}`, '') : cookie;
 }
 
 export function handleCookie(url: string, headers: Headers) {
@@ -52,7 +52,9 @@ export function mergeRequestHeaders(url: string, headers = {}): { [key: string]:
 		console.log(error.message);
 	}
 
-	const mergedCookie = [cookies, existingCookies].filter(str => str).reduce((s1, s2) => s1 + s2);
+	const mergedCookie = [cookies, existingCookies]
+		.filter(str => str)
+		.reduce((s1, s2) => s1 + s2, '');
 
 	return mergedCookie ? { ...headers, Cookie: mergedCookie } : headers;
 }

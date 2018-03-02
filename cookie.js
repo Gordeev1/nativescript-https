@@ -19,7 +19,7 @@ function resolveCookieString(headers, _a) {
     var searchReg = existing ? /^cookie$/i : /^set-cookie$/i;
     var key = Object.keys(headers).find(function (key) { return Boolean(key.match(searchReg)); });
     var cookie = headers[key];
-    return Array.isArray(cookie) ? cookie.reduce(function (s1, s2) { return s1 + "," + s2; }) : cookie;
+    return Array.isArray(cookie) ? cookie.reduce(function (s1, s2) { return s1 + "," + s2; }, '') : cookie;
 }
 function handleCookie(url, headers) {
     var cookies = resolveCookieString(headers);
@@ -48,7 +48,9 @@ function mergeRequestHeaders(url, headers) {
     catch (error) {
         console.log(error.message);
     }
-    var mergedCookie = [cookies, existingCookies].filter(function (str) { return str; }).reduce(function (s1, s2) { return s1 + s2; });
+    var mergedCookie = [cookies, existingCookies]
+        .filter(function (str) { return str; })
+        .reduce(function (s1, s2) { return s1 + s2; }, '');
     return mergedCookie ? __assign({}, headers, { Cookie: mergedCookie }) : headers;
 }
 exports.mergeRequestHeaders = mergeRequestHeaders;
