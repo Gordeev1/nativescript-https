@@ -1,7 +1,7 @@
 import { Headers } from 'tns-core-modules/http';
 import { HttpsResponse } from './https.common';
 import * as AppSettings from 'tns-core-modules/application-settings';
-import MobileStorageCookieStore from 'tough-cookie-mobile-storage-store';
+const MobileStorageCookieStore = require('tough-cookie-mobile-storage-store');
 import { CookieJar } from 'tough-cookie-no-native';
 
 const STORE_KEY = 'NS_COOKIE_STORE';
