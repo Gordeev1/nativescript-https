@@ -72,7 +72,7 @@ function AFSuccess(task, data) {
     else {
         content = data;
     }
-    return Promise.resolve({ task: task, content: content });
+    return { task: task, content: content };
 }
 function AFFailure(task, _a) {
     var description = _a.description, localizedDescription = _a.localizedDescription, userInfo = _a.userInfo;
@@ -94,7 +94,7 @@ function AFFailure(task, _a) {
         content.description =
             'nativescript-https > Invalid SSL certificate! ' + content.description;
     }
-    return Promise.resolve({ task: task, content: content, reason: localizedDescription });
+    return { task: task, content: content, reason: localizedDescription };
 }
 function request(_a) {
     var headers = _a.headers, body = _a.body, url = _a.url, method = _a.method;
@@ -137,12 +137,12 @@ function request(_a) {
         if (!types_1.isNullOrUndefined(response)) {
             var statusCode = response.statusCode, allHeaderFields = response.allHeaderFields;
             sendi.statusCode = statusCode;
+            cookie_1.handleCookie(url, allHeaderFields);
             allHeaderFields.enumerateKeysAndObjectsUsingBlock(function (k, v) { return (sendi.headers[k] = v); });
         }
         if (reason) {
             sendi.reason = reason;
         }
-        cookie_1.handleCookie(url, sendi.headers);
         return sendi;
     });
 }

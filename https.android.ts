@@ -205,17 +205,17 @@ export function request({
 
 						const statusCode = response.code();
 
-						let headers = {};
-						let heads: okhttp3.Headers = response.headers();
-						let i: number,
-							len: number = heads.size();
-						for (i = 0; i < len; i++) {
+						const headers = {};
+						const heads: okhttp3.Headers = response.headers();
+						const len: number = heads.size();
+
+						handleCookie(url, heads);
+
+						for (let i = 0; i < len; i++) {
 							let key = heads.name(i);
 							let value = heads.value(i);
 							headers[key] = value;
 						}
-
-						handleCookie(url, headers);
 
 						resolve({ content, statusCode, headers });
 					},

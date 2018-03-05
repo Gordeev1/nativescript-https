@@ -146,13 +146,13 @@ function request(_a) {
                     var statusCode = response.code();
                     var headers = {};
                     var heads = response.headers();
-                    var i, len = heads.size();
-                    for (i = 0; i < len; i++) {
+                    var len = heads.size();
+                    cookie_1.handleCookie(url, heads);
+                    for (var i = 0; i < len; i++) {
                         var key = heads.name(i);
                         var value = heads.value(i);
                         headers[key] = value;
                     }
-                    cookie_1.handleCookie(url, headers);
                     resolve({ content: content, statusCode: statusCode, headers: headers });
                 },
                 onFailure: function (task, error) {

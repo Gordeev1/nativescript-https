@@ -64,7 +64,7 @@ export function setupRedirects(follow: boolean) {
 function AFSuccess(
 	task: NSURLSessionDataTask,
 	data: NSDictionary<string, any> & NSData & NSArray<any>
-): Promise<{ task: NSURLSessionDataTask; content: any }> {
+): { task: NSURLSessionDataTask; content: any } {
 	let content;
 	if (data && data.class) {
 		const { name } = data.class();
@@ -93,13 +93,13 @@ function AFSuccess(
 		content = data;
 	}
 
-	return Promise.resolve({ task, content });
+	return { task, content };
 }
 
 function AFFailure(
 	task: NSURLSessionDataTask,
 	{ description, localizedDescription, userInfo }: NSError
-): Promise<{ task: NSURLSessionDataTask; content: any; reason: any }> {
+): { task: NSURLSessionDataTask; content: any; reason: any } {
 	const data: NSData = userInfo.valueForKey(AFNetworkingOperationFailingURLResponseDataErrorKey);
 
 	let body = NSString.alloc()
@@ -120,7 +120,7 @@ function AFFailure(
 		content.description =
 			'nativescript-https > Invalid SSL certificate! ' + content.description;
 	}
-	return Promise.resolve({ task, content, reason: localizedDescription });
+	return { task, content, reason: localizedDescription };
 }
 
 export function request({
@@ -166,7 +166,7 @@ export function request({
 			return manager[methods[method]](
 				url,
 				dict,
-				(task: NSURLSessionDataTask, data: any) => resolve(AFSuccess(task, data)),
+				(task: NSURLSessionDataTask, data) => resolve(AFSuccess(task, data)),
 				(task, error) => reject(AFFailure(task, error))
 			);
 		} catch (error) {
@@ -192,14 +192,13 @@ export function request({
 			if (!isNullOrUndefined(response)) {
 				const { statusCode, allHeaderFields } = response;
 				sendi.statusCode = statusCode;
+				handleCookie(url, allHeaderFields);
 				allHeaderFields.enumerateKeysAndObjectsUsingBlock((k, v) => (sendi.headers[k] = v));
 			}
 
 			if (reason) {
 				sendi.reason = reason;
 			}
-
-			handleCookie(url, sendi.headers);
 
 			return sendi;
 		}
