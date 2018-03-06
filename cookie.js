@@ -60,7 +60,9 @@ function resolvePassedCookieString(headers) {
     var searchReg = /^cookie$/i;
     var key = Object.keys(headers).find(function (key) { return Boolean(key.match(searchReg)); });
     var cookie = headers[key];
-    return Array.isArray(cookie) ? cookie.reduce(function (s1, s2) { return s1 + "; " + s2; }, '') : cookie;
+    return Array.isArray(cookie)
+        ? cookie.filter(function (str) { return str; }).reduce(function (s1, s2) { return s1 + "; " + s2; }, '')
+        : cookie;
 }
 function mergeRequestHeaders(url, headers) {
     if (headers === void 0) { headers = {}; }

@@ -68,7 +68,9 @@ function resolvePassedCookieString(headers: Headers = {}): string {
 	const searchReg = /^cookie$/i;
 	const key = Object.keys(headers).find(key => Boolean(key.match(searchReg)));
 	const cookie = headers[key];
-	return Array.isArray(cookie) ? cookie.reduce((s1, s2) => `${s1}; ${s2}`, '') : cookie;
+	return Array.isArray(cookie)
+		? cookie.filter(str => str).reduce((s1, s2) => `${s1}; ${s2}`, '')
+		: cookie;
 }
 
 export function mergeRequestHeaders(url: string, headers = {}): { [key: string]: string } {
