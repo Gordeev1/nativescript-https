@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("tns-core-modules/utils/types");
-var cookie_common_1 = require("./cookie.common");
+var cookie_1 = require("./cookie");
 var methods = {
     GET: 'GETParametersSuccessFailure',
     POST: 'POSTParametersSuccessFailure',
@@ -112,7 +112,7 @@ function request(_a) {
             manager_1.requestSerializer.allowsCellularAccess = true;
             manager_1.securityPolicy = policies.secured == true ? policies.secure : policies.def;
             manager_1.requestSerializer.timeoutInterval = 10;
-            var mergedHeaders_1 = cookie_common_1.mergeRequestHeaders(url, headers);
+            var mergedHeaders_1 = cookie_1.mergeRequestHeaders(url, headers);
             Object.keys(mergedHeaders_1).forEach(function (key) {
                 return manager_1.requestSerializer.setValueForHTTPHeaderField(mergedHeaders_1[key], key);
             });
@@ -137,7 +137,7 @@ function request(_a) {
         if (!types_1.isNullOrUndefined(response)) {
             var statusCode = response.statusCode, allHeaderFields = response.allHeaderFields;
             sendi.statusCode = statusCode;
-            cookie_common_1.handleCookie(url, allHeaderFields);
+            cookie_1.handleCookie(url, allHeaderFields);
             allHeaderFields.enumerateKeysAndObjectsUsingBlock(function (k, v) { return (sendi.headers[k] = v); });
         }
         if (reason) {

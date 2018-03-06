@@ -2,7 +2,7 @@ import * as application from 'tns-core-modules/application';
 import { HttpRequestOptions, Headers, HttpResponse } from 'tns-core-modules/http';
 import { isDefined, isNullOrUndefined, isObject } from 'tns-core-modules/utils/types';
 import * as Https from './https.common';
-import { handleCookie, mergeRequestHeaders } from './cookie.common';
+import { handleCookie, mergeRequestHeaders } from './cookie';
 
 interface Ipeer {
 	enabled: boolean;

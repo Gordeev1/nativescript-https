@@ -1,11 +1,9 @@
 import { Headers } from 'tns-core-modules/http';
-import { isAndroid } from 'tns-core-modules/platform';
 import { HttpsResponse } from './https.common';
+import { isAndroid } from 'tns-core-modules/platform';
 import * as AppSettings from 'tns-core-modules/application-settings';
 const MobileStorageCookieStore = require('tough-cookie-mobile-storage-store');
 import { CookieJar } from 'tough-cookie-no-native';
-import { resolveCookieString as resolveCookieStringIOS } from './cookie.ios';
-import { resolveCookieString as resolveCookieStringAndroid } from './cookie.android';
 
 const STORE_KEY = 'NS_COOKIE_STORE';
 
@@ -16,6 +14,36 @@ class NSStorageWrapper {
 
 const store = new MobileStorageCookieStore(new NSStorageWrapper(), STORE_KEY);
 export const cookieJar = new CookieJar(store);
+
+export function resolveCookieStringAndroid(headers: okhttp3.Headers): string[] {
+	const searchReg = /^set-cookie$/i;
+	const length: number = headers.size();
+
+	let result: string[] = [];
+
+	for (let i = 0; i < length; i++) {
+		const key = headers.name(i);
+		if (key.match(searchReg)) {
+			const value = headers.value(i);
+			result = [...result, value];
+		}
+	}
+
+	return result;
+}
+
+export function resolveCookieStringIOS(headers: NSDictionary<any, any>): string[] {
+	const searchReg = /^set-cookie$/i;
+	let result: string[] = [];
+
+	headers.enumerateKeysAndObjectsUsingBlock((key, value) => {
+		if (key.match(searchReg)) {
+			result = [...result, value];
+		}
+	});
+
+	return result;
+}
 
 export function handleCookie(url: string, headers: okhttp3.Headers | NSDictionary<any, any>): void {
 	const cookies = isAndroid

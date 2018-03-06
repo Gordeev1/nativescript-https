@@ -23,10 +23,6 @@
 		"typeRoots": ["./node_modules/@types", "./node_modules"],
 		"types": []
 	},
-	"exclude": [
-		"demo",
-		"node_modules"
-	],
+	"exclude": ["demo", "node_modules"],
 	"compileOnSave": false
 }
-
