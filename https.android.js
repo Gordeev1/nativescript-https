@@ -4,7 +4,7 @@ var types_1 = require("tns-core-modules/utils/types");
 var peer = {
     enabled: false,
     allowInvalidCertificates: false,
-    validatesDomainName: true,
+    validatesDomainName: true
 };
 var followRedirects = true;
 function enableSSLPinning(options) {
@@ -64,8 +64,8 @@ function getClient(reload) {
     var client = new okhttp3.OkHttpClient.Builder().followRedirects(followRedirects);
     if (peer.enabled == true) {
         if (peer.host || peer.certificate) {
-            var spec = okhttp3.ConnectionSpec.MODERN_TLS;
-            client.connectionSpecs(java.util.Collections.singletonList(spec));
+            var _a = okhttp3.ConnectionSpec, MODERN_TLS = _a.MODERN_TLS, COMPATIBLE_TLS = _a.COMPATIBLE_TLS;
+            client.connectionSpecs(java.util.Arrays.asList([MODERN_TLS, COMPATIBLE_TLS]));
             var pinner = new okhttp3.CertificatePinner.Builder();
             pinner.add(peer.host, [peer.certificate]);
             client.certificatePinner(pinner.build());
@@ -98,7 +98,7 @@ function getClient(reload) {
                                 peer.host == hostname &&
                                 peer.host == session.getPeerHost() &&
                                 pp.indexOf(peer.host) != -1);
-                        },
+                        }
                     }));
                 }
                 catch (error) {
@@ -113,7 +113,9 @@ function getClient(reload) {
     Client = client.build();
     return Client;
 }
-var strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder().permitAll().build();
+var strictModeThreadPolicyPermitAll = new android.os.StrictMode.ThreadPolicy.Builder()
+    .permitAll()
+    .build();
 function request(opts) {
     return new Promise(function (resolve, reject) {
         try {
@@ -126,16 +128,15 @@ function request(opts) {
                 });
             }
             var methods = {
-                'GET': 'get',
-                'HEAD': 'head',
-                'DELETE': 'delete',
-                'POST': 'post',
-                'PUT': 'put',
-                'PATCH': 'patch',
+                GET: 'get',
+                HEAD: 'head',
+                DELETE: 'delete',
+                POST: 'post',
+                PUT: 'put',
+                PATCH: 'patch'
             };
-            if ((['GET', 'HEAD'].indexOf(opts.method) != -1)
-                ||
-                    (opts.method == 'DELETE' && !types_1.isDefined(opts.body))) {
+            if (['GET', 'HEAD'].indexOf(opts.method) != -1 ||
+                (opts.method == 'DELETE' && !types_1.isDefined(opts.body))) {
                 request_1[methods[opts.method]]();
             }
             else {
@@ -170,7 +171,7 @@ function request(opts) {
                 },
                 onFailure: function (task, error) {
                     reject(error);
-                },
+                }
             }));
         }
         catch (error) {
