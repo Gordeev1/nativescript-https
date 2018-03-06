@@ -4,16 +4,20 @@ var types_1 = require("tns-core-modules/utils/types");
 var followRedirects = true;
 var policies = {
     def: AFSecurityPolicy.defaultPolicy(),
-    secured: false,
+    secured: false
 };
 policies.def.allowInvalidCertificates = true;
 policies.def.validatesDomainName = false;
 function enableSSLPinning(options) {
     if (!policies.secure) {
         policies.secure = AFSecurityPolicy.policyWithPinningMode(1);
-        var allowInvalidCertificates = (types_1.isDefined(options.allowInvalidCertificates)) ? options.allowInvalidCertificates : false;
+        var allowInvalidCertificates = types_1.isDefined(options.allowInvalidCertificates)
+            ? options.allowInvalidCertificates
+            : false;
         policies.secure.allowInvalidCertificates = allowInvalidCertificates;
-        var validatesDomainName = (types_1.isDefined(options.validatesDomainName)) ? options.validatesDomainName : true;
+        var validatesDomainName = types_1.isDefined(options.validatesDomainName)
+            ? options.validatesDomainName
+            : true;
         policies.secure.validatesDomainName = validatesDomainName;
         var data = NSData.dataWithContentsOfFile(options.certificate);
         policies.secure.pinnedCertificates = NSSet.setWithObject(data);
@@ -37,10 +41,14 @@ function AFSuccess(resolve, task, data) {
     if (data && data.class) {
         if (data.enumerateKeysAndObjectsUsingBlock || data.class().name == 'NSArray') {
             var serial = NSJSONSerialization.dataWithJSONObjectOptionsError(data, 1);
-            content = NSString.alloc().initWithDataEncoding(serial, NSUTF8StringEncoding).toString();
+            content = NSString.alloc()
+                .initWithDataEncoding(serial, NSUTF8StringEncoding)
+                .toString();
         }
         else if (data.class().name == 'NSData') {
-            content = NSString.alloc().initWithDataEncoding(data, NSASCIIStringEncoding).toString();
+            content = NSString.alloc()
+                .initWithDataEncoding(data, NSUTF8StringEncoding)
+                .toString();
         }
         else {
             content = data;
@@ -57,7 +65,9 @@ function AFSuccess(resolve, task, data) {
 }
 function AFFailure(resolve, reject, task, error) {
     var data = error.userInfo.valueForKey(AFNetworkingOperationFailingURLResponseDataErrorKey);
-    var body = NSString.alloc().initWithDataEncoding(data, NSUTF8StringEncoding).toString();
+    var body = NSString.alloc()
+        .initWithDataEncoding(data, NSUTF8StringEncoding)
+        .toString();
     try {
         body = JSON.parse(body);
     }
@@ -69,7 +79,8 @@ function AFFailure(resolve, reject, task, error) {
         url: error.userInfo.objectForKey('NSErrorFailingURLKey').description
     };
     if (policies.secured == true) {
-        content.description = 'nativescript-https > Invalid SSL certificate! ' + content.description;
+        content.description =
+            'nativescript-https > Invalid SSL certificate! ' + content.description;
     }
     var reason = error.localizedDescription;
     resolve({ task: task, content: content, reason: reason });
@@ -87,7 +98,7 @@ function request(opts) {
                 manager_1.responseSerializer = AFHTTPResponseSerializer.serializer();
             }
             manager_1.requestSerializer.allowsCellularAccess = true;
-            manager_1.securityPolicy = (policies.secured == true) ? policies.secure : policies.def;
+            manager_1.securityPolicy = policies.secured == true ? policies.secure : policies.def;
             manager_1.requestSerializer.timeoutInterval = 10;
             var heads_1 = opts.headers;
             if (heads_1) {
@@ -105,14 +116,14 @@ function request(opts) {
                     });
                 }
             }
-            manager_1.setTaskWillPerformHTTPRedirectionBlock(function (url, session, response, request) { return followRedirects ? request : null; });
+            manager_1.setTaskWillPerformHTTPRedirectionBlock(function (url, session, response, request) { return (followRedirects ? request : null); });
             var methods = {
-                'GET': 'GETParametersSuccessFailure',
-                'POST': 'POSTParametersSuccessFailure',
-                'PUT': 'PUTParametersSuccessFailure',
-                'DELETE': 'DELETEParametersSuccessFailure',
-                'PATCH': 'PATCHParametersSuccessFailure',
-                'HEAD': 'HEADParametersSuccessFailure',
+                GET: 'GETParametersSuccessFailure',
+                POST: 'POSTParametersSuccessFailure',
+                PUT: 'PUTParametersSuccessFailure',
+                DELETE: 'DELETEParametersSuccessFailure',
+                PATCH: 'PATCHParametersSuccessFailure',
+                HEAD: 'HEADParametersSuccessFailure'
             };
             manager_1[methods[opts.method]](opts.url, dict_1, function success(task, data) {
                 AFSuccess(resolve, task, data);
@@ -126,7 +137,7 @@ function request(opts) {
     }).then(function (AFResponse) {
         var sendi = {
             content: AFResponse.content,
-            headers: {},
+            headers: {}
         };
         var response = AFResponse.task.response;
         if (!types_1.isNullOrUndefined(response)) {
