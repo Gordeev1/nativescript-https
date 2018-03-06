@@ -50,6 +50,7 @@ function AFSuccess(task, data) {
     var content;
     if (data && data.class) {
         var name = data.class().name;
+        console.log('name', name);
         if (data.enumerateKeysAndObjectsUsingBlock || name == 'NSArray') {
             var serial = NSJSONSerialization.dataWithJSONObjectOptionsError(data, 1);
             content = NSString.alloc()
@@ -58,7 +59,7 @@ function AFSuccess(task, data) {
         }
         if (name == 'NSData') {
             content = NSString.alloc()
-                .initWithDataEncoding(data, NSASCIIStringEncoding)
+                .initWithDataEncoding(data, NSUTF8StringEncoding)
                 .toString();
         }
         else {

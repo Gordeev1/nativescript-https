@@ -69,6 +69,8 @@ function AFSuccess(
 	if (data && data.class) {
 		const { name } = data.class();
 
+		console.log('name', name);
+
 		if (data.enumerateKeysAndObjectsUsingBlock || name == 'NSArray') {
 			const serial = NSJSONSerialization.dataWithJSONObjectOptionsError(
 				data,
@@ -80,7 +82,7 @@ function AFSuccess(
 		}
 		if (name == 'NSData') {
 			content = NSString.alloc()
-				.initWithDataEncoding(data, NSASCIIStringEncoding)
+				.initWithDataEncoding(data, NSUTF8StringEncoding)
 				.toString();
 		} else {
 			content = data;
