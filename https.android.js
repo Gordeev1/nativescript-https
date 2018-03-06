@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var types_1 = require("tns-core-modules/utils/types");
-var cookie_1 = require("./cookie");
+var cookie_common_1 = require("./cookie.common");
 var peer = {
     enabled: false,
     allowInvalidCertificates: false,
@@ -123,7 +123,7 @@ function request(_a) {
         try {
             var client = getClient();
             var request_1 = new okhttp3.Request.Builder();
-            var mergedHeaders_1 = cookie_1.mergeRequestHeaders(url, headers);
+            var mergedHeaders_1 = cookie_common_1.mergeRequestHeaders(url, headers);
             request_1.url(url);
             Object.keys(mergedHeaders_1).forEach(function (key) { return request_1.addHeader(key, mergedHeaders_1[key]); });
             var withoutBody = ['GET', 'HEAD'].includes(method) || (method == 'DELETE' && !types_1.isDefined(body));
@@ -147,7 +147,7 @@ function request(_a) {
                     var headers = {};
                     var heads = response.headers();
                     var len = heads.size();
-                    cookie_1.handleCookie(url, heads);
+                    cookie_common_1.handleCookie(url, heads);
                     for (var i = 0; i < len; i++) {
                         var key = heads.name(i);
                         var value = heads.value(i);
